@@ -1,0 +1,80 @@
+{% set DAYS_ORDER = ['ПТ','СБ','ПН','ВТ','СР','ЧТ'] %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>СТАТИСТИКА | CLOSING TEAM</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body class="text-gray-900">
+  <div class="bg-overlay min-h-screen w-full">
+    <div class="max-w-7xl mx-auto p-4 md:p-8">
+      <h1 class="text-2xl md:text-4xl font-extrabold text-center text-white tracking-wide drop-shadow-md title-stroke">
+        СТАТИСТИКА | CLOSING TEAM
+      </h1>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
+        <!-- ЛЕВАЯ КОЛОНКА: Дни недели -->
+        <div class="lg:col-span-2 glass p-4 md:p-6">
+          <div class="text-center text-lg font-semibold mb-3">Цель 20кк</div>
+          <table class="w-full table-compact">
+            <thead>
+              <tr class="text-left">
+                <th class="w-16">День</th>
+                <th>Результат (общее)</th>
+              </tr>
+            </thead>
+            <tbody>
+            {% for d in DAYS_ORDER %}
+              {% set val = day_totals.get(d, 0) %}
+              {% set kk = (val // 100000) / 10 %}
+              {% set cls = 'cell-empty' if val == 0 else ('cell-green' if val >= 4000000 else 'cell-yellow') %}
+              <tr>
+                <td class="font-semibold">{{ d }}</td>
+                <td class="{{ cls }} rounded-md">
+                  <div class="flex items-center justify-between px-2 py-1">
+                    <span>{{ '%.1f' % kk }}/4кк</span>
+                    <span class="text-sm text-gray-700">({{ "{:,}".format(val).replace(",", " ") }})</span>
+                  </div>
+                </td>
+              </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+
+          <div class="text-center mt-4 font-semibold">
+            Уже угнали: {{ '%.1f' % (grand_total // 100000 / 10) }}кк
+          </div>
+        </div>
+
+        <!-- ПРАВАЯ КОЛОНКА: Сотрудники -->
+        <div class="glass p-4 md:p-6">
+          <div class="text-lg font-semibold mb-3">Сотрудники</div>
+          <table class="w-full table-compact">
+            <thead>
+              <tr class="text-left">
+                <th>Имя</th>
+                <th class="w-36">Сумма</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for e in employees %}
+              <tr>
+                <td class="font-medium">{{ e.name }}</td>
+                <td>{{ format_short(e.total_sum) }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="text-center mt-6">
+        <a href="/admin" class="inline-block px-4 py-2 rounded-lg bg-white/80 hover:bg-white transition">Админ-панель</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

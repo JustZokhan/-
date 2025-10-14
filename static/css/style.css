@@ -1,0 +1,33 @@
+:root {
+  --glass-bg: rgba(255,255,255,0.82);
+  --glass-border: rgba(255,255,255,0.35);
+}
+body {
+  min-height: 100vh;
+  background: url('/static/img/background.png') center/cover no-repeat fixed;
+}
+.bg-overlay { background: rgba(0, 0, 0, 0.35); }
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+}
+.cell-empty { background: transparent; }
+.cell-yellow { background: rgba(255, 221, 87, 0.65); }
+.cell-green { background: rgba(74, 222, 128, 0.65); }
+
+td, th { padding: 10px 12px; }
+.table-compact td, .table-compact th { padding: 8px 10px; }
+
+/* Черная обводка заголовка */
+.title-stroke {
+  -webkit-text-stroke: 2px #000;
+  text-shadow:
+    1px 1px 0 #000,
+    -1px 1px 0 #000,
+    1px -1px 0 #000,
+    -1px -1px 0 #000;
+}

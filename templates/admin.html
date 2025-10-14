@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Админ — CLOSING TEAM</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body class="text-gray-900">
+  <div class="bg-overlay min-h-screen w-full">
+    <div class="max-w-5xl mx-auto p-4 md:p-8">
+      <h1 class="text-2xl md:text-3xl font-extrabold text-center text-white title-stroke">Админ-панель</h1>
+
+      {% if not is_authed %}
+        <div class="glass p-4 md:p-6 mt-6 max-w-md mx-auto">
+          <form method="post" action="/admin/login" class="space-y-3">
+            <label class="block text-sm">Пароль</label>
+            <input type="password" name="password" class="w-full border rounded px-3 py-2" placeholder="Введите пароль">
+            <button class="px-4 py-2 rounded bg-white/80 hover:bg-white transition w-full" type="submit">Войти</button>
+            {% if error %}
+              <div class="text-red-600 text-sm mt-2">{{ error }}</div>
+            {% endif %}
+          </form>
+        </div>
+      {% else %}
+        <div class="glass p-4 md:p-6 mt-6 space-y-8">
+          <h2 class="text-xl font-semibold">Сотрудники</h2>
+          <form method="post" action="/admin/employee/add" class="flex flex-wrap gap-3 items-end">
+            <div>
+              <label class="block text-sm">Имя</label>
+              <input type="text" name="name" class="border rounded px-3 py-2" required>
+            </div>
+            <button class="px-4 py-2 rounded bg-white/80 hover:bg-white transition" type="submit">Добавить</button>
+          </form>
+
+          <table class="w-full table-compact">
+            <thead>
+              <tr class="text-left"><th>Имя</th><th>Текущая сумма</th><th>Действия</th></tr>
+            </thead>
+            <tbody>
+              {% for e in employees %}
+              <tr>
+                <td class="font-medium">{{ e.name }}</td>
+                <td>{{ format_short(e.total_sum) }}</td>
+                <td class="space-x-2">
+                  <form method="post" action="/admin/employee/delete" class="inline">
+                    <input type="hidden" name="id" value="{{ e.id }}"/>
+                    <button class="text-red-700 underline" onclick="return confirm('Удалить {{ e.name }}?')">Удалить</button>
+                  </form>
+                  <form method="post" action="/admin/employee/rename" class="inline-flex items-center gap-2">
+                    <input type="hidden" name="id" value="{{ e.id }}"/>
+                    <input type="text" name="name" placeholder="Новое имя" class="border rounded px-2 py-1"/>
+                    <button class="underline">Переименовать</button>
+                  </form>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+
+          <h2 class="text-xl font-semibold">Добавить результат</h2>
+          <form method="post" action="/admin/result/add" class="flex flex-wrap gap-3 items-end">
+            <div>
+              <label class="block text-sm">Сотрудник</label>
+              <select name="employee_id" class="border rounded px-3 py-2" required>
+                {% for e in employees %}
+                  <option value="{{ e.id }}">{{ e.name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm">День</label>
+              <select name="day" class="border rounded px-3 py-2">
+                {% for d in ['ПТ','СБ','ПН','ВТ','СР','ЧТ'] %}
+                  <option value="{{ d }}">{{ d }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm">Сумма (можно 100к или 1кк)</label>
+              <input type="text" name="amount" class="border rounded px-3 py-2" placeholder="например: 350000 или 350к" required>
+            </div>
+            <button class="px-4 py-2 rounded bg-white/80 hover:bg-white transition" type="submit">Добавить</button>
+          </form>
+
+          <div class="pt-4 border-t">
+            <form method="post" action="/admin/logout">
+              <button class="px-4 py-2 rounded bg-white/80 hover:bg-white transition">Выйти</button>
+            </form>
+          </div>
+        </div>
+      {% endif %}
+
+      <div class="text-center mt-6">
+        <a href="/" class="inline-block px-4 py-2 rounded-lg bg-white/80 hover:bg-white transition">На главную</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
